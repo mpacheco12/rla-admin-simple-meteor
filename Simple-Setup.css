@@ -1,0 +1,235 @@
+html {
+    width: 100%;
+    background-image: url(/img/test-bg.jpg);
+    -webkit-background-size: cover;
+    background-size: cover;
+    background-attachment: fixed;
+    height: auto;
+    min-height: 100%;
+}
+
+body {
+    background-color: transparent !important;
+    color: white !important;
+    padding-bottom: 20px;
+}
+
+.texture-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(/img/grid.png);
+    background-color: rgba(30, 30, 30, 0.95);
+    z-index: 1;
+}
+
+#main {
+    height: auto;
+    overflow: hidden;
+    position: relative;
+    z-index: 3;
+    padding-top: 130px;
+}
+
+.password_input {
+    background-color: black;
+    border: white 1px solid;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.realLifeLogo {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 100px;
+    height: auto;
+}
+
+.top {
+    width: 600px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.centered {
+    width: 30%;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3.05%;
+}
+
+.left,
+.right {
+    width: 30%;
+    margin-left: 10%;
+    margin-right: 10%;
+    float: left;
+}
+
+.transition {
+    transition: margin-left, 3s, ease;
+}
+
+.right {
+    margin-top: 2%;
+}
+
+.hidden {
+    display: none;
+}
+
+a {
+    color: #d6d6d6;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    list-style-type: none;
+}
+
+table {
+    width: 70%;
+    margin: 0 auto;
+}
+
+th {
+    text-align: left;
+}
+
+td {
+    text-align: right;
+}
+
+article img {
+    width: 600px;
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+}
+
+.network-list {
+    max-height: 290px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.selected {
+    border: 1px solid #fff;
+}
+
+.topMenu {
+    position: absolute;
+    bottom: 50px;
+    width: 100%;
+}
+
+.relative {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.topMenuStep {
+    margin-top: 50px;
+    font-size: 14px;
+    color: #C2C2C2;
+    transition: all ease 0.5s;
+}
+
+.topMenuStep.active {
+    color: white;
+    font-size: 18px;
+}
+
+.topMenuStep.active .number {
+    /*font-size: 36px;*/
+}
+
+.topMenuStep .number {
+    font-size: 30px;
+}
+
+.topMenuStep.active .number .circle {
+    display: block;
+    margin: 0 auto;
+    width: 38px;
+    height: 38px;
+    line-height: 31px;
+    background-color: white;
+    color: black;
+    border-radius: 50%;
+}
+
+.network-list {
+    height: 290px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.network-list p {
+    font-size: 14px;
+}
+
+.left h2 {
+    font-size: 14px;
+}
+
+#connect {
+    font-size: 16px;
+}
+
+#connect input {
+    height: 30px;
+}
+
+.btn {
+    background-color: #A2A2A2;
+}
+
+.ui-keyboard {
+    font-size: 16px !important;
+}
+
+.network-data {
+    font-size: 14px;
+}
+
+.login-content .error {
+    border: solid 1px red;
+}
+
+.login-content p.error {
+    color: red;
+    border: 0px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.hidden-btn {
+    height: 0;
+    color: transparent;
+    width: 0;
+    font-size: 0;
+}
+
+@media (max-width: 993px) {
+    .topMenu {
+        position: relative;
+        margin-top: 30px;
+    }
+    .msgTable {
+        height: auto;
+    }
+}

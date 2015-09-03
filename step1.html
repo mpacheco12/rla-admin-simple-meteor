@@ -1,0 +1,87 @@
+<template name="step1">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <table width="100%" height="290" cellpadding="0" cellspacing="0" border="0" class="msgTable">
+                    <tr>
+                        <td valign="center">
+                            <h2 style="text-align:left">
+                                {{#if connectStep1}}
+                                    To connect to the Internet, choose your Wi-Fi network.
+                                {{/if}}
+                                {{#if connectStep2}}
+                                    Plase enter the password of the selected network.
+                                {{/if}}
+                            </h2>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                {{#if connectStep1}}
+                    {{> networkList}}
+                {{/if}}
+                {{#if connectStep2}}
+                    {{> paassword}}
+                {{/if}}
+                {{#if connectStep3}}
+                    {{> networkList}}
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</template>
+<template name="networkList">
+    {{#if networks}}
+        {{#if isConnected}}
+            {{> connected}}
+        {{else}}
+            <ul class="network-list">
+                {{#each networks}}
+                    {{> networkListItem }}
+                {{/each}}
+            </ul>
+        {{/if}}
+    {{else}}
+        {{> scanning}}
+    {{/if}}
+</template>
+<template name="connected">
+    <table width="100%" height="290" cellpadding="0" cellspacing="0" border="0" class="msgTable">
+        <tr>
+            <td valign="center">
+                <h4 style="text-align:left">Already connected to a network</h4>
+                <div class="row" style="margin-top:30px;">
+                    <div class="col-md-6 col-md-offset-3">
+                        <a href="{{pathFor 'login'}}">
+                            <div class="btn continue-btn" style="width:100px:margin:0 auto;">Continue</div>
+                        </a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</template>
+<template name="scanning">
+    <table width="100%" height="290" cellpadding="0" cellspacing="0" border="0" class="msgTable">
+        <tr>
+            <td valign="center">
+                <h4 style="text-align:left">Scanning...</h4>
+            </td>
+        </tr>
+    </table>
+</template>
+<template name="networkListItem">
+    <li class="network-item">
+        <p>
+            <a href="">{{ this.ssid }}</a>
+        </p>
+    </li>
+</template>
+<template name="password">
+    <form id="connect">
+        <h2>{{currentNetwork.ssid}}</h2>
+        <input type="text" id="ipad" class="password_input" name="password" placeholder="Password" size="40" value="{{ currentNetwork.password }}" />
+        <input type="submit" value="Connect" class="btn">
+    </form>
+</template>
