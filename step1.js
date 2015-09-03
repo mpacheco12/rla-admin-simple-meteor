@@ -13,7 +13,6 @@ if (Meteor.isClient) {
     });
     Template.step1.helpers({
         connectStep1: function() {
-            console.log(Session.get('connectStep'))
             if (Session.get('connectStep') == 1)
                 return true;
             return false;
@@ -28,11 +27,24 @@ if (Meteor.isClient) {
                 return true;
             return false;
         },
+        connectStep4: function() {
+            if (Session.get('connectStep') == 4)
+                return true;
+            return false;
+        },
+    });
+    Template.password.helpers({
         currentNetwork:function(){
             return Session.get('currentNetworkSSID');
         }
     });
-    Template.password.helpers({
+    Template.networkData.helpers({
+        networkStatus:function(){
+            return Session.get('networkStatus');
+        },
+        networkBssid:function(){
+            return Session.get('networkBssid');
+        },
         currentNetwork:function(){
             return Session.get('currentNetworkSSID');
         }
@@ -47,53 +59,57 @@ if (Meteor.isClient) {
     Template.networkListItem.events({
         'click .network-item': function() {
             Session.set('currentNetworkSSID',this.ssid);
+            Session.set('networkBssid',this.bssid);
             Session.set('connectStep', 2);
         },
     });
-    Template.step1.events({
-        
-        'submit form': function(event) {
-            event.preventDefault();
-            Session.set('templateRight', 'connecting');
+    Template.networkData.events({
+        'click .btn': function(){
+            Session.set('connectStep', 1);
+            TopMenuHelper.setStep(2);
+        },
+        'click .back-btn':function(){
+            Session.set('connectStep', 1);
+            TopMenuHelper.setStep(1);
+        }
+    })
+    Template.password.events({
+        'click .btn': function(){
+            Session.set('connectStep', 3);
 
-            var currentNetwork = Session.get('currentNetwork');
+            var currentNetwork = Session.get('currentNetworkSSID');
 
             var connectionData = {
-                ssid: currentNetwork.ssid,
-                password: event.target.password.value
+                ssid: currentNetwork,
+                password: $('.password_input').val()
             };
 
             console.log("attempting to connect with: ", connectionData);
 
             Meteor.call('connect', connectionData, function(error, result) {
+                
                 if (error) {
-                    currentNetwork.status = "Could not connect";
+                    currentNetwork = false;
                     Session.set({
-                        'currentNetwork': currentNetwork,
-                        'templateRight': 'networkData',
-                        'connected': false
+                        'currentNetworkSSID': currentNetwork,
+                        'connectStep': 4,
+                        'connected': false,
+                        'networkStatus':'not connected'
                     });
+                    return
                 }
 
                 if (result) {
-                    currentNetwork.status = result;
                     Session.set({
-                        'currentNetwork': currentNetwork,
-                        'templateRight': 'networkData',
-                        'connected': true
+                        'currentNetworkSSID': currentNetwork,
+                        'connectStep': 4,
+                        'connected': true,
+                        'networkStatus':'connected'
                     });
-
-                    var network = {
-                        ssid: currentNetwork.ssid,
-                        bssid: currentNetwork.bssid,
-                        password: event.target.password.value,
-                        lastConnected: Date.now()
-                    };
-
-                    Meteor.call('upsertNetwork', network, function(error, result) {});
+                    return
                 }
 
             });
-        }
-    });
+        }   
+    })
 }

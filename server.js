@@ -110,8 +110,13 @@ if (Meteor.isServer) {
                     result = "Connected";
                 }
                 if (callback) {
-                    callback(errors, result);
                     console.log('child process exited with code ' + code);
+                    if(code==0)
+                        callback(errors, result);
+                    else{
+                        errors = 'error'
+                        callback(errors,result)
+                    }
                 } else {
                     return result;
                 }
@@ -120,6 +125,7 @@ if (Meteor.isServer) {
 
         function checkForErrors(data) {
             var result = data.split(/\n/);
+            console.log(result)
             if (result[0].match(/Failed to join network/)) {
                 errors = {
                     error: true,
