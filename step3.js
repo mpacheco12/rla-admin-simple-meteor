@@ -10,7 +10,7 @@ if (Meteor.isClient) {
             };
             Meteor.call('renameCamera', userData, function(error, result) {
                 $('#camera-name').removeAttr('disabled');
-                Router.go('success');
+                TopMenuHelper.setStep(4);
             });
         }
     });

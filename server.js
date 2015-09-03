@@ -1,3 +1,5 @@
+Networks = new Mongo.Collection("networks");
+Connections = new Mongo.Collection("connections");
 if (Meteor.isServer) {
     Meteor.startup(function() {
         Network = {
@@ -5,25 +7,39 @@ if (Meteor.isServer) {
             listScanResults: false,
             scanning: false,
             exec: Npm.require('child_process').exec,
-            scan: function(success) {
-                Network.scanning = true;
-                var e = Network.exec('nmcli dev wifi list', ['-s']);
-                var results = '';
-                e.stdout.on('data', function(data) {
-                    var part = data.toString();
-                    results += part;
-                    Network.scanResults = results;
-                    delete(e);
-                });
+            scan: function() {
+                    Network.scanning = true;
+                    var e = Network.exec('nmcli dev wifi list', ['-s']);
+                   
 
-                e.stderr.on('data', function(data) {
-                    console.log(data);
-                });
+                    var results = '';
+                    e.stdout.on('data', Meteor.bindEnvironment(function(data) {
+                        var part = data.toString();
+                        results += part;
+                        Network.scanResults = results;
+                        delete(e);
+                    }));
 
-                e.on('close', function(code) {
-                    success(false, Network.scanResults);
-                    // console.log('child process exited with code ' + code);
-                });
+                    e.stderr.on('data', Meteor.bindEnvironment(function(data) {
+                        console.log(data);
+                    }));
+
+                    e.on('close', Meteor.bindEnvironment( function(code) {
+                        var pretty = Network.list(Network.scanResults);
+                        Networks.remove({})
+                        Connections.remove({})
+                        for(var i in pretty){
+                            var network = pretty[i];
+                            Networks.insert({ 
+                                ssid: network['ssid'],
+                                bssid:network['bssid'],
+                                rssi:network['rssi'],
+                                security:network['security'],
+                                connected:network['connected']
+                            });
+                        }
+                       return
+                    }));
             },
             list: function(data) {
 
@@ -42,11 +58,11 @@ if (Meteor.isServer) {
                     trimmedData.push(trimmedI);
                 }
                 // Get SSID by matching regex to BSSID
-                var networks = [];
+                var net = [];
                 for (var j = 0; j < trimmedData.length; j++) {
                     var networkData = cutString(trimmedData[j]);
                     var indNetworkData = networkData.split(/\s\s+/g);
-                    networks.push({
+                    net.push({
                         ssid: getSSID(trimmedData[j]),
                         bssid: indNetworkData[1],
                         rssi: parseInt(indNetworkData[5]),
@@ -71,7 +87,7 @@ if (Meteor.isServer) {
                     return string.substring(getSSID(string).length);
                 }
 
-                networks.sort(function(a, b) {
+                net.sort(function(a, b) {
                     if (a.rssi < b.rssi) {
                         return 1;
                     }
@@ -82,9 +98,9 @@ if (Meteor.isServer) {
                 });
 
 
-                Network.listScanResults = networks;
+                Network.listScanResults = net;
                 Network.scanning = false;
-                return networks;
+                return net;
             }
         };
 
@@ -100,27 +116,24 @@ if (Meteor.isServer) {
             var result = false;
             var errors = false;
 
-            c.stdout.on('data', function(data) {
+            c.stdout.on('data', Meteor.bindEnvironment(function(data) {
                 console.log(data);
                 errors = checkForErrors(data);
-            });
+            }));
 
-            c.on('close', function(code) {
-                if (!errors) {
-                    result = "Connected";
+            c.on('close',Meteor.bindEnvironment( function(code) {
+                Connections.remove({})
+                if(code==0)
+                    Connections.insert({
+                        connected:true
+                    })
+                else{
+                    Connections.insert({
+                        connected:false
+                    })
                 }
-                if (callback) {
-                    console.log('child process exited with code ' + code);
-                    if(code==0)
-                        callback(errors, result);
-                    else{
-                        errors = 'error'
-                        callback(errors,result)
-                    }
-                } else {
-                    return result;
-                }
-            });
+              
+            }));
         };
 
         function checkForErrors(data) {
@@ -154,15 +167,20 @@ if (Meteor.isServer) {
                 network = data.ssid;
 
                 console.log("before wrapAsync: ", network, password);
-                var result = connectWrapAsync(network, password);
-                return result;
+                
+
+                var Fiber = Npm.require('fibers');
+                Fiber(function(){
+                    var result = C(network, password);
+                }).run();
             },
 
             'scan': function scan() {
-                syncFunc = Meteor.wrapAsync(Network.scan);
-                var data = syncFunc();
-                var pretty = Network.list(data);
-                return pretty;
+                var Fiber = Npm.require('fibers');
+                Fiber(function(){
+                    Network.scan();
+                }).run();
+                return
             },
             'saveLoginInfo': function(myData) {
                 var fs = Npm.require('fs');

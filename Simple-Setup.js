@@ -30,21 +30,17 @@ if (Meteor.isClient) {
             if (Session.get('step') == 3)
                 return true;
             return false;
+        },
+        isStep4: function() {
+            if (Session.get('step') == 4)
+                return true;
+            return false;
         }
     });
     TimeHelpers = {
 
         scan: function() {
             Meteor.call('scan', function(error, result) {
-                networks = result;
-                Session.set('connected', false);
-                for (var i in networks) {
-                    if (networks[i]['connected'] == 'yes') {
-                        Session.set('connected', true);
-                        break;
-                    }
-                }
-                Session.set('scanResults', networks);
             });
         },
 

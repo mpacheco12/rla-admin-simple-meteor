@@ -38,7 +38,7 @@ if (Meteor.isClient) {
                                 Session.set('error', 'An unexpected error has occurred. Please try again.');
                                 return;
                             }
-                            Router.go('renameCamera');
+                            TopMenuHelper.setStep(3);
                         });
 
                     }

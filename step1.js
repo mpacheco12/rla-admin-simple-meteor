@@ -1,12 +1,28 @@
 if (Meteor.isClient) {
-    Session.setDefault('scanResults', false);
     Session.setDefault('connected', false);
+    Session.setDefault('scanning', true);
     Template.networkList.helpers({
         networks: function() {
-            var networks = Session.get('scanResults');
-            return networks;
+          return Networks.find({});
+        },
+        isScanning: function(){
+            if(Networks.find({}).count()<=0){
+                Session.set('scanning',true)
+            }else{
+                Session.set('scanning',false)
+
+            }
+            return Session.get('scanning')
         },
         isConnected: function() {
+            var networks = Networks.find({}).fetch();
+            Session.set('connected', false);
+            for (var i in networks) {
+                if (networks[i]['connected'] == 'yes') {
+                    Session.set('connected', true);
+                    break;
+                }
+            }
             return Session.get('connected');
         }
 
@@ -33,6 +49,14 @@ if (Meteor.isClient) {
             return false;
         },
     });
+    Template.connecting.helpers({
+        connected:function() {
+            var connection = Connections.findOne({});
+            if(connection.connected)
+                TopMenuHelper.setStep(2);
+            return connection.connected
+        }
+    })
     Template.password.helpers({
         currentNetwork:function(){
             return Session.get('currentNetworkSSID');
@@ -88,26 +112,6 @@ if (Meteor.isClient) {
 
             Meteor.call('connect', connectionData, function(error, result) {
                 
-                if (error) {
-                    currentNetwork = false;
-                    Session.set({
-                        'currentNetworkSSID': currentNetwork,
-                        'connectStep': 4,
-                        'connected': false,
-                        'networkStatus':'not connected'
-                    });
-                    return
-                }
-
-                if (result) {
-                    Session.set({
-                        'currentNetworkSSID': currentNetwork,
-                        'connectStep': 4,
-                        'connected': true,
-                        'networkStatus':'connected'
-                    });
-                    return
-                }
 
             });
         }   

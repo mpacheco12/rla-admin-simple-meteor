@@ -78,5 +78,22 @@
         {{#if isStep3}}
             {{>step3}}
         {{/if}}
+        {{#if isStep4}}
+            {{>success}}
+        {{/if}}
+    </div>
+</template>
+<template name="success">
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <h2>contratulations!</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-center">
+            <h1>
+                You have completed your camera configuration.
+            </h1>
+        </div>
     </div>
 </template>
