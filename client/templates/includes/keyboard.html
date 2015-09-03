@@ -1,0 +1,52 @@
+<template name="keyboard">
+    <script>
+    $.keyboard.keyaction.enter = function(base) {
+        if (base.el.nodeName === "INPUT") {
+            base.accept(); // accept the content
+            $('form').submit(); // submit form on enter
+        } else {
+            base.insertText('\r\n'); // textarea
+        }
+    };
+
+    $('#ipad').keyboard({
+        display: {
+            'bksp': "\u2190",
+            'accept': 'return',
+            'default': 'ABC',
+            'meta1': '.?123',
+            'meta2': '#+='
+        },
+        layout: 'custom',
+        customLayout: {
+            'default': [
+                '1 2 3 4 5 6 7 8 9 0 {bksp}',
+                'q w e r t y u i o p ',
+                'a s d f g h j k l', '{accept}'
+                '{meta1} z x c v b n m , . {shift}',
+
+            ],
+            'shift': [
+                '1 2 3 4 5 6 7 8 9 0 {bksp}',
+                'Q W E R T Y U I O P ',
+                'A S D F G H J K L', '{accept}'
+                '{meta1} Z X C V B N M ! ? {shift}',
+            ],
+            'meta1': [
+                '1 2 3 4 5 6 7 8 9 0 {bksp}',
+                '- / : ; ( ) \u20ac & @', '{accept}'
+                '{meta2} . , ? ! \' " {default}',
+            ],
+            'meta2': [
+                '[ ] { } # % ^ * + = {bksp}',
+                '_ \\ | ~ &lt; &gt; $ \u00a3 \u00a5', '{accept}'
+                '{meta1} . , ? ! \' " {default}',
+            ]
+        },
+        // stayOpen: true,
+        // alwaysOpen: true,
+        initialFocus: true,
+        autoAccept: false,
+    });
+    </script>
+</template>

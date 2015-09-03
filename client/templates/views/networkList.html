@@ -1,0 +1,11 @@
+<template name="networkList">
+  {{#if networks}}
+    <ul class="network-list">
+      {{#each networks}}
+        {{> networkListItem }}
+      {{/each}}
+    </ul>
+  {{else}}
+    {{> scanning}}
+  {{/if}}
+</template>
