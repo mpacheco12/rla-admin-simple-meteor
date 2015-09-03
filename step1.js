@@ -1,7 +1,6 @@
 if (Meteor.isClient) {
     Session.setDefault('scanResults', false);
     Session.setDefault('connected', false);
-    Session.setDefault('connectStep', 1);
     Template.networkList.helpers({
         networks: function() {
             var networks = Session.get('scanResults');
@@ -14,6 +13,7 @@ if (Meteor.isClient) {
     });
     Template.step1.helpers({
         connectStep1: function() {
+            console.log(Session.get('connectStep'))
             if (Session.get('connectStep') == 1)
                 return true;
             return false;
@@ -27,24 +27,31 @@ if (Meteor.isClient) {
             if (Session.get('connectStep') == 3)
                 return true;
             return false;
+        },
+        currentNetwork:function(){
+            return Session.get('currentNetworkSSID');
         }
     });
-    Template.step1.rendered = function() {
-        TopMenuHelper.setStep(1);
-        // TimeHelpers.scan();
-    };
-    Template.step1.events({
-        'click .network-item': function() {
-            var currentNetwork = this;
-            _.extend(currentNetwork, {
-                status: "Not connected"
-            });
-
+    Template.password.helpers({
+        currentNetwork:function(){
+            return Session.get('currentNetworkSSID');
+        }
+    })
+    Template.connected.events({
+        'click .continue-btn':function(){
             Session.set({
-                'currentNetwork': currentNetwork,
-                'connectStep': 2
+                'step': 2
             });
+        }
+    });
+    Template.networkListItem.events({
+        'click .network-item': function() {
+            Session.set('currentNetworkSSID',this.ssid);
+            Session.set('connectStep', 2);
         },
+    });
+    Template.step1.events({
+        
         'submit form': function(event) {
             event.preventDefault();
             Session.set('templateRight', 'connecting');

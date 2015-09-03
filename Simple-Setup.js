@@ -2,6 +2,9 @@ if (Meteor.isClient) {
     // counter starts at 0
 
     Session.setDefault('step', 1);
+    Session.setDefault('connectStep', 1);
+    
+    
     TopMenuHelper = {
         setStep: function(step) {
             $('.topMenuStep').removeClass('active');
@@ -69,4 +72,7 @@ if (Meteor.isClient) {
             });
         }
     };
+    TimeHelpers.scan();
+    // Session.set('scanResults', [{ssid:'asd'}]);
+    TopMenuHelper.setStep(1);
 }
