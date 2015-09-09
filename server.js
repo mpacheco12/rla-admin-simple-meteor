@@ -1,5 +1,5 @@
-Networks = new Mongo.Collection("networks");
-Connections = new Mongo.Collection("connections");
+Networks = new Meteor.Collection("networks");
+Connections = new Meteor.Collection("connections");
 if (Meteor.isServer) {
     Meteor.startup(function() {
         Network = {
@@ -18,11 +18,17 @@ if (Meteor.isServer) {
                         results += part;
                         Network.scanResults = results;
                         delete(e);
-                    }));
+                    }, 
+        function(error) {
+            console.log('Error in bindEnvironment:', error);
+        }));
 
                     e.stderr.on('data', Meteor.bindEnvironment(function(data) {
                         console.log(data);
-                    }));
+                    }, 
+        function(error) {
+            console.log('Error in bindEnvironment:', error);
+        }));
 
                     e.on('close', Meteor.bindEnvironment( function(code) {
                         var pretty = Network.list(Network.scanResults);
@@ -39,7 +45,10 @@ if (Meteor.isServer) {
                             });
                         }
                        return
-                    }));
+                    }, 
+        function(error) {
+            console.log('Error in bindEnvironment:', error);
+        }));
             },
             list: function(data) {
 
@@ -119,7 +128,10 @@ if (Meteor.isServer) {
             c.stdout.on('data', Meteor.bindEnvironment(function(data) {
                 console.log(data);
                 errors = checkForErrors(data);
-            }));
+            }, 
+        function(error) {
+            console.log('Error in bindEnvironment:', error);
+        }));
 
             c.on('close',Meteor.bindEnvironment( function(code) {
                 Connections.remove({})
@@ -133,7 +145,10 @@ if (Meteor.isServer) {
                     })
                 }
               
-            }));
+            }, 
+        function(error) {
+            console.log('Error in bindEnvironment:', error);
+        }));
         };
 
         function checkForErrors(data) {
@@ -150,7 +165,6 @@ if (Meteor.isServer) {
             }
         }
 
-        var connectWrapAsync = Meteor.wrapAsync(C);
 
         Meteor.methods({
             'connect': function connect(data) {
