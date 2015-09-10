@@ -19,16 +19,16 @@ if (Meteor.isServer) {
                         Network.scanResults = results;
                         delete(e);
                     }, 
-        function(error) {
-            console.log('Error in bindEnvironment:', error);
-        }));
+                    function(error) {
+                        console.log('Error in bindEnvironment:', error);
+                    }));
 
                     e.stderr.on('data', Meteor.bindEnvironment(function(data) {
                         console.log(data);
                     }, 
-        function(error) {
-            console.log('Error in bindEnvironment:', error);
-        }));
+                    function(error) {
+                        console.log('Error in bindEnvironment:', error);
+                    }));
 
                     e.on('close', Meteor.bindEnvironment( function(code) {
                         var pretty = Network.list(Network.scanResults);
@@ -46,9 +46,9 @@ if (Meteor.isServer) {
                         }
                        return
                     }, 
-        function(error) {
-            console.log('Error in bindEnvironment:', error);
-        }));
+                    function(error) {
+                        console.log('Error in bindEnvironment:', error);
+                    }));
             },
             list: function(data) {
 
@@ -129,11 +129,12 @@ if (Meteor.isServer) {
                 console.log(data);
                 errors = checkForErrors(data);
             }, 
-        function(error) {
-            console.log('Error in bindEnvironment:', error);
-        }));
+            function(error) {
+                console.log('Error in bindEnvironment:', error);
+            }));
 
             c.on('close',Meteor.bindEnvironment( function(code) {
+                console.log('connection returned code: '+code)
                 Connections.remove({})
                 if(code==0)
                     Connections.insert({
@@ -146,9 +147,9 @@ if (Meteor.isServer) {
                 }
               
             }, 
-        function(error) {
-            console.log('Error in bindEnvironment:', error);
-        }));
+            function(error) {
+                console.log('Error in bindEnvironment:', error);
+            }));
         };
 
         function checkForErrors(data) {

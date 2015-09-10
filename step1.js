@@ -52,8 +52,14 @@ if (Meteor.isClient) {
     Template.connecting.helpers({
         connected:function() {
             var connection = Connections.findOne({});
-            if(connection.connected)
-                TopMenuHelper.setStep(2);
+            if(connection)
+                if(connection.connected)
+                    TopMenuHelper.setStep(2);
+                else{
+                    TopMenuHelper.setStep(2);
+                    Session.set('connectStep',1);
+                    TimeHelpers.scan();
+                }
             return connection.connected
         }
     })
@@ -75,9 +81,7 @@ if (Meteor.isClient) {
     })
     Template.connected.events({
         'click .continue-btn':function(){
-            Session.set({
-                'step': 2
-            });
+            TopMenuHelper.setStep(2);
         }
     });
     Template.networkListItem.events({
